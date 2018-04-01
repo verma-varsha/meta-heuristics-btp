@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int D = 2;
+const int D = 5;
 
 struct particle{
     double fitness;
@@ -11,7 +11,7 @@ double evaluate_fitness(double pos[]){
     double sum=0;
     for(int i=0; i<D; i++){
         //fitness function being used here is f = (x-4)^2 + (y-4)^2
-        sum+= (pos[i]-4)*(pos[i]-4);
+        sum+= (pos[i]-(i+1))*(pos[i]-(i+1));
     }
     return sum;
 }
@@ -40,7 +40,7 @@ int main(){
         p1.fitness = -1;
         for(int j=0; j<D; j++){
             p1.pos[j]=(double)(rand_r(&seed))/(double)((2<<25)-1) -10;
-            //cout<<p1.pos[j]<<" ";
+            cout<<p1.pos[j]<<" ";
             seed++;
         }
         population.push_back(p1);

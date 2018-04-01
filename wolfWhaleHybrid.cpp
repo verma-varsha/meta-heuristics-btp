@@ -58,7 +58,7 @@ int main(){
         p1.fitness = -1;
         for(int j=0; j<D; j++){
             p1.pos[j]=(double)(rand_r(&seed))/(double)((2<<25)-1) -10;
-            //cout<<p1.pos[j]<<" ";
+            cout<<p1.pos[j]<<" ";
             seed++;
         }
         populationGrey.push_back(p1);
