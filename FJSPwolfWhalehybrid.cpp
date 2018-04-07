@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include <random>
+#include <time.h>
 using namespace std;
 
 class Particle{
@@ -121,8 +122,10 @@ int evaluate_makespan(vector<double> pos, vector<Operation> operationData, int n
 }
 
 int main(){
+    clock_t t;
+    t=clock();
     ifstream inFile;
-    inFile.open("datafile.txt");
+    inFile.open("kacem3.txt");
     if (!inFile) {
         cout << "Unable to open file";
         exit(1); // terminate with error
@@ -167,8 +170,8 @@ int main(){
         VARIABLES COMMON TO BOTH GREYWOLF AND WHALE
     *************************************************************************************************/
     totalNoOps=operationData.size();
-    int populationSize = 10;
-    double x_delta = 3.0;
+    int populationSize = 50;
+    double x_delta = 1.0;
     unsigned s = 2;
     default_random_engine generator (s);
     uniform_real_distribution<double> distribution(-1*x_delta,x_delta);
@@ -309,7 +312,7 @@ int main(){
                             delta.pos[i] = populationGrey[2].pos[i];
                         }
                     }
-                    cout<<"G1 kg="<<kg<<" best_makespan="<<alpha.makespan<<endl;
+                    //cout<<"G1 kg="<<kg<<" best_makespan="<<alpha.makespan<<endl;
                 }
             }
             #pragma omp section
@@ -364,7 +367,7 @@ int main(){
                             p_best_W.pos[j] = populationWhale[0].pos[j];
                         }
                     }
-                    cout<<"W1 kw="<<kw<<" best_makespan="<<p_best_W.makespan<<endl;
+                    //cout<<"W1 kw="<<kw<<" best_makespan="<<p_best_W.makespan<<endl;
                 }
             }
         }
@@ -445,7 +448,7 @@ int main(){
                             delta.pos[i] = populationWhale[2].pos[i];
                         }
                     }
-                    cout<<"G2 kg="<<kg<<" best_makespan="<<alpha.makespan<<endl;
+                    //cout<<"G2 kg="<<kg<<" best_makespan="<<alpha.makespan<<endl;
                 }
             }
             #pragma omp section
@@ -500,7 +503,7 @@ int main(){
                             p_best_W.pos[j] = populationGrey[0].pos[j];
                         }
                     }
-                    cout<<"W2 kw="<<kw<<" best_makespan="<<p_best_W.makespan<<endl;
+                    //cout<<"W2 kw="<<kw<<" best_makespan="<<p_best_W.makespan<<endl;
                 }
             }
         }
@@ -508,22 +511,123 @@ int main(){
     }
 
     //COMPARISON OF THE RESULTS OBTAINED FROM THE TWO OPTIMIZATION PARADIGMS
-    if(alpha.makespan > p_best_W.makespan){
+    if(alpha.makespan < p_best_W.makespan){
         cout<<"Best Solution:"<<"\n";
         cout<<"Makespan:"<<alpha.makespan<<"\n";
-        for(int s=0; s<2*totalNoOps; s++){
-            cout<<alpha.pos[s]<<" ";
+        cout<<endl;
+        /*
+
+        vector<int> routeVector;//will contain the values of the route chosen for each operation
+        int priorityVector[totalNoOps];
+        //CONSTRUCTING THE ROUTE VECTOR
+        for(int i=0; i<totalNoOps; i++){
+            int x = round((operationData[i].routeChoicesNo-1)*(alpha.pos[i]+x_delta)*(1/(2*x_delta)) + 1);
+            routeVector.push_back(x-1);
+        }
+        //CONSTRUCTING THE SEQUENCE PRIORITY VECTOR
+        vector<pair<double, int>> intermediateVec;
+        for(int i=0; i<totalNoOps; i++){
+            intermediateVec.push_back(make_pair(alpha.pos[i+totalNoOps], i));
+        }
+        sort(intermediateVec.begin(), intermediateVec.end(), sortinrev);
+        int q[numberOfJobs]={0};
+        for(int i=0; i<totalNoOps; i++){
+            int job_Id=operationData[intermediateVec[i].second].jobId;
+            int job_seq_Id=operationData[intermediateVec[i].second].opJobSeqId;
+            q[job_Id]++;
+            if(q[job_Id]-1 == job_seq_Id){
+                priorityVector[i]=intermediateVec[i].second;
+            }
+            else{
+                int placeCount=0;
+                for(int j=0; j<totalNoOps; j++){
+                    if(operationData[intermediateVec[j].second].jobId==job_Id){
+                        placeCount++;
+                        if(placeCount-1==job_seq_Id){
+                            priorityVector[j]=intermediateVec[i].second;
+                        }
+                    }
+                }
+            }
+        }
+            //PRINTING ROUTE AND PRIORITY VECTOR
+        
+        cout<<"Route vector=";
+        for(int i=0; i<totalNoOps; i++){
+            cout<<routeVector[i]<<" ";
         }
         cout<<endl;
+        cout<<"Priority Vector=";
+        for(int i=0; i<totalNoOps; i++){
+            cout<<priorityVector[i]<<" ";
+        }
+        cout<<endl;
+        */
+        
+
+
     }
     else{
         cout<<"Best Solution:"<<"\n";
         cout<<"Makespan:"<<p_best_W.makespan<<"\n";
-        for(int s=0; s<2*totalNoOps; s++){
-            cout<<p_best_W.pos[s]<<" ";
+        cout<<endl;
+
+        /*
+        vector<int> routeVector;//will contain the values of the route chosen for each operation
+        int priorityVector[totalNoOps];
+        //CONSTRUCTING THE ROUTE VECTOR
+        for(int i=0; i<totalNoOps; i++){
+            int x = round((operationData[i].routeChoicesNo-1)*(p_best_W.pos[i]+x_delta)*(1/(2*x_delta)) + 1);
+            routeVector.push_back(x-1);
+        }
+        //CONSTRUCTING THE SEQUENCE PRIORITY VECTOR
+        vector<pair<double, int>> intermediateVec;
+        for(int i=0; i<totalNoOps; i++){
+            intermediateVec.push_back(make_pair(p_best_W.pos[i+totalNoOps], i));
+        }
+        sort(intermediateVec.begin(), intermediateVec.end(), sortinrev);
+        int q[numberOfJobs]={0};
+        for(int i=0; i<totalNoOps; i++){
+            int job_Id=operationData[intermediateVec[i].second].jobId;
+            int job_seq_Id=operationData[intermediateVec[i].second].opJobSeqId;
+            q[job_Id]++;
+            if(q[job_Id]-1 == job_seq_Id){
+                priorityVector[i]=intermediateVec[i].second;
+            }
+            else{
+                int placeCount=0;
+                for(int j=0; j<totalNoOps; j++){
+                    if(operationData[intermediateVec[j].second].jobId==job_Id){
+                        placeCount++;
+                        if(placeCount-1==job_seq_Id){
+                            priorityVector[j]=intermediateVec[i].second;
+                        }
+                    }
+                }
+            }
+        }
+        t = clock()-t;
+        double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+        cout<<"time taken ="<<time_taken<<endl;
+
+        //PRINTING ROUTE AND PRIORITY VECTOR
+        cout<<"Route vector=";
+        for(int i=0; i<totalNoOps; i++){
+            cout<<routeVector[i]<<" ";
         }
         cout<<endl;
+        cout<<"Priority Vector=";
+        for(int i=0; i<totalNoOps; i++){
+            cout<<priorityVector[i]<<" ";
+        }
+        cout<<endl;
+        */
+        
+
     }
+    t = clock()-t;
+    double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+    cout<<"time taken ="<<time_taken<<endl;
 
     return 0;
 }
